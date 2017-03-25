@@ -28,6 +28,8 @@ def kMeans(dataSet, numK, numRandRestarts):
 #look up docs here http://scikit-learn.org/stable/modules/mixture.html
 
 #GMO = GaussianMixtureObject
+#@return GMO, GaussianMixtureObject
+#get means with GMO.means_
 def expectationMax(dataSet, numGaussianComps):
     GMO = sklearn.mixture.GaussianMixture(n_components = numGaussianComps);
     GMO.fit(dataSet);
@@ -35,13 +37,17 @@ def expectationMax(dataSet, numGaussianComps):
     print(GMO.means_);
     return GMO.means_;
 
-def pCAResults(dataSet):
+#@return PCA object fitted to data
+#get components_ for fun stuff
+def PCAResults(dataSet):
     PCAObject = sklearn.decomposition.PCA();
     PCAObject.fit(dataSet);
     print(PCAObject.components_);
-    return PCAObject.components_;
+    return PCAObject;
 
-def iCAResults(dataSet):
+#@return ICA object fitted to data
+#get components_ for fun stuff
+def ICAResults(dataSet):
     ICAObject = sklearn.decomposition.FastICA();
     ICAObject.fit(dataSet);
     print(ICAObject.components_);
