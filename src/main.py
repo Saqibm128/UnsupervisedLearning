@@ -1,4 +1,5 @@
 import sklearn.mixture;
+import sklearn.decomposition;
 from matplotlib import pyplot as plt;
 import numpy;
 import scipy.cluster.vq as vq;
@@ -13,6 +14,8 @@ dataSet = genfromtxt('../data/NHanesDataWColumns.csv',delimiter=',');
 
 #try to go through a few of the k means at a time
 #RANDOM RESTARTS! 3 of them
+#@return a list of iteration results
+#   more specifically, each iteration is the mean, followed by distortion/error measure
 def kMeans(dataSet, numK, numRandRestarts):
     allResults = list();
     for i in range(0, numRandRestarts):
@@ -31,3 +34,15 @@ def expectationMax(dataSet, numGaussianComps):
     print("Means for " + str(numGaussianComps) + "Expectation Maximization (Gaussian)");
     print(GMO.means_);
     return GMO.means_;
+
+def pCAResults(dataSet):
+    PCAObject = sklearn.decomposition.PCA();
+    PCAObject.fit(dataSet);
+    print(PCAObject.components_);
+    return PCAObject.components_;
+
+def iCAResults(dataSet):
+    ICAObject = sklearn.decomposition.FastICA();
+    ICAObject.fit(dataSet);
+    print(ICAObject.components_);
+    return ICAObject.components_;
