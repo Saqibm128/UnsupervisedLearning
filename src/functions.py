@@ -3,27 +3,37 @@ import sklearn.decomposition;
 from matplotlib import pyplot as plt;
 import numpy;
 import scipy.cluster.vq as vq;
-from numpy import genfromtxt;
 
-numRandRestarts = 3;
-numK = 3;
-numGaussianComps = 3;
 
-#This is where one would choose the dataset to analyze
-dataSet = genfromtxt('../data/NHanesDataWColumns.csv',delimiter=',');
+
 
 #try to go through a few of the k means at a time
-#RANDOM RESTARTS! 3 of them
 #@return a list of iteration results
 #   more specifically, each iteration is the mean, followed by distortion/error measure
-def kMeans(dataSet, numK, numRandRestarts):
+def kMeansMultipleK(dataSet, numK, fn = "KMeansDistortions", graph = True):
     allResults = list();
-    for i in range(0, numRandRestarts):
-        kmeanResults = vq.kmeans(dataSet, numK);
-        print("Iteration " + str(i));
-        print("K-Means, K = " + str(numK));
-        print(kmeansResults);
-        allResults = allResults + kmeanResults;
+    allDistortions = list();
+    kmeanResults = [];
+    for i in range(1, numK):
+        kmeanResults = vq.kmeans(dataSet, i);
+        # print("Iteration " + str(i));
+        # print("K-Means, K = " + str(numK));
+        allDistortions.append([kmeanResults[1]]);
+    if (graph):
+        plt.plot(range(1, numK), allDistortions);
+        plt.title("K over Distortion");
+        plt.xlabel("K");
+        plt.ylabel("Distortion");
+        # print("Final Results for K-Means Algorithm");
+        # print(kmeanResults);
+        # plt.show();
+        plt.savefig(fn);
+    return kmeanResults;
+
+def findDistortions(dataSet, clusters):
+    results = vq.vq(dataSet, clusters);
+    return results[1];
+
 
 #look up docs here http://scikit-learn.org/stable/modules/mixture.html
 
@@ -33,8 +43,8 @@ def kMeans(dataSet, numK, numRandRestarts):
 def expectationMax(dataSet, numGaussianComps):
     GMO = sklearn.mixture.GaussianMixture(n_components = numGaussianComps);
     GMO.fit(dataSet);
-    print("Means for " + str(numGaussianComps) + "Expectation Maximization (Gaussian)");
-    print(GMO.means_);
+    # print("Means for " + str(numGaussianComps) + "Expectation Maximization (Gaussian)");
+    # print(GMO.means_);
     return GMO.means_;
 
 #@return PCA object fitted to data
@@ -42,7 +52,7 @@ def expectationMax(dataSet, numGaussianComps):
 def PCAResults(dataSet):
     PCAObject = sklearn.decomposition.PCA();
     PCAObject.fit(dataSet);
-    print(PCAObject.components_);
+    # print(PCAObject.components_);
     return PCAObject;
 
 #@return ICA object fitted to data
@@ -50,5 +60,5 @@ def PCAResults(dataSet):
 def ICAResults(dataSet):
     ICAObject = sklearn.decomposition.FastICA();
     ICAObject.fit(dataSet);
-    print(ICAObject.components_);
+    # print(ICAObject.components_);
     return ICAObject.components_;
